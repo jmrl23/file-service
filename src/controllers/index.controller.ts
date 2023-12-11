@@ -10,6 +10,13 @@ export const controller = Router();
 
 controller
 
+  .get(
+    '/',
+    wrapper(function (_request, response) {
+      response.status(200).end('OK');
+    }),
+  )
+
   /**
    * @openapi
    *
