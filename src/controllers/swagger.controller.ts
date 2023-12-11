@@ -17,6 +17,10 @@ const swaggerSpec = swaggerJsDoc({
         url: 'http://localhost:3001',
         description: 'Local development',
       },
+      {
+        url: 'https://service-file-0023.onrender.com',
+        description: 'Render',
+      },
     ],
     components: {
       securitySchemes: {
