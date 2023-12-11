@@ -11,6 +11,8 @@ import {
   vendors,
   wrapper,
 } from '@jmrl23/express-helper';
+import { prismaError as PrismaError } from 'prisma-better-errors';
+import { Prisma } from '@prisma/client';
 
 export const app = express();
 
@@ -56,6 +58,10 @@ app.use(
   }),
   // custom error handler
   errorHandler((error, _request, _response, next) => {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      error = new PrismaError(error);
+    }
+
     if (!(error instanceof vendors.httpErrors.HttpError)) {
       if (error instanceof Error) {
         if ('statusCode' in error && typeof error.statusCode === 'number') {

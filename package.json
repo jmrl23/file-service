@@ -24,6 +24,7 @@
     "googleapis": "^129.0.0",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
+    "prisma-better-errors": "^1.0.2",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
     "winston": "^3.10.0"

@@ -2196,6 +2196,11 @@ prettier@^3.0.3:
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.1.0.tgz#c6d16474a5f764ea1a4a373c593b779697744d5e"
   integrity sha512-TQLvXjq5IAibjh8EpBIkNKxO749UEWABoiIZehEPiY4GNpVdhaFKqSTu+QrlU6D2dPAfubRmtJTi4K4YkQ5eXw==
 
+prisma-better-errors@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/prisma-better-errors/-/prisma-better-errors-1.0.2.tgz#e894c983d6d6bc28e5e8abdd219b423c9504d395"
+  integrity sha512-3XpQr/n2B8HOguCP9DJnR+cRKgr83w/mu0htB0CzZENYJvrZ33izapkmam0tHq4pm1G/zJ9pZBaB8S4lEo62ag==
+
 prisma@^5.7.0:
   version "5.7.0"
   resolved "https://registry.yarnpkg.com/prisma/-/prisma-5.7.0.tgz#3c1c56d392b5d1137de954edefa4533fa092663e"
