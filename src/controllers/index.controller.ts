@@ -128,6 +128,9 @@ controller
    *        application/json:
    *          schema:
    *            $ref: '#/components/schemas/FileList'
+   *          example:
+   *            mimetype: text/plain
+   *            size_min: 0
    *    responses:
    *      '200':
    *        description: Successful response
