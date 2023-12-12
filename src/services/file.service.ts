@@ -7,12 +7,16 @@ import { caching } from 'cache-manager';
 import { CacheService } from './cache.service';
 import { PrismaService } from './prisma.service';
 import { DriveService } from './drive.service';
-import generateCharacters from 'generate-unique-id';
 import { FileListDto } from '../dtos/FileList.dto';
+import generateCharacters from 'generate-unique-id';
+import env from 'env-var';
 
 export class FileService {
   private static instance: FileService;
   private static defaultMulterOptions: Options = {
+    limits: {
+      fileSize: env.get('FILE_SIZE_LIMIT').default('0').asInt(),
+    },
     storage: diskStorage({
       destination: join(tmpdir(), 'FileService'),
       filename: (_request, file, done) => {

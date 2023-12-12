@@ -13,6 +13,7 @@ import {
 } from '@jmrl23/express-helper';
 import { prismaError as PrismaError } from 'prisma-better-errors';
 import { Prisma } from '@prisma/client';
+import { MulterError } from 'multer';
 
 export const app = express();
 
@@ -60,6 +61,10 @@ app.use(
   errorHandler((error, _request, _response, next) => {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       error = new PrismaError(error);
+    }
+
+    if (error instanceof MulterError) {
+      error = new vendors.httpErrors.BadRequest(error.message);
     }
 
     if (!(error instanceof vendors.httpErrors.HttpError)) {
