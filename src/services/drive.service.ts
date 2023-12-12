@@ -20,7 +20,6 @@ export class DriveService {
       const oauth2Client = new google.auth.OAuth2(
         env.get('GOOGLE_CLIENT_ID').asString(),
         env.get('GOOGLE_CLIENT_SECRET').asString(),
-        env.get('GOOGLE_PLAYGROUND_URL').asString(),
       );
 
       oauth2Client.setCredentials({
