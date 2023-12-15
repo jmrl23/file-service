@@ -141,6 +141,48 @@ export const controller = Router();
     /**
      * @openapi
      *
+     * /s/{prefix}/{name}:
+     *  get:
+     *    summary: get file stream
+     *    parameters:
+     *      - name: prefix
+     *        in: path
+     *        schema:
+     *          type: string
+     *          pattern: '^[a-zA-Z]{6}$'
+     *          required: true
+     *      - name: name
+     *        in: path
+     *        schema:
+     *          type: string
+     *          required: true
+     *    responses:
+     *      '200':
+     *        description: Successful response
+     */
+
+    .get(
+      '/s/:prefix([a-zA-Z]{6})/:name',
+      validate('PARAMS', FileGetDto),
+      wrapper(async function (request, response) {
+        const file = await fileService.getByPrefixAndName(
+          request.params.prefix,
+          request.params.name,
+        );
+
+        if (!file) {
+          throw vendors.httpErrors.NotFound('File not found');
+        }
+
+        const stream = await fileService.getStream(file);
+
+        stream.pipe(response);
+      }),
+    )
+
+    /**
+     * @openapi
+     *
      * /list:
      *  post:
      *    summary: get file list
