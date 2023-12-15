@@ -5,6 +5,9 @@ import { FileGetDto } from '../dtos/FileGet.dto';
 import { FileDeleteDto } from '../dtos/FileDelete.dto';
 import { authorizationMiddleware } from '../middlewares/authorization.middleware';
 import { FileListDto } from '../dtos/FileList.dto';
+import { createWriteStream, unlinkSync } from 'node:fs';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 
 export const controller = Router();
 
@@ -108,12 +111,30 @@ export const controller = Router();
         }
 
         const stream = await fileService.getStream(file);
+        const tmpFilePath = join(
+          tmpdir(),
+          'FileService',
+          Date.now().toString() + '-' + request.params.name,
+        );
+        const writeStream = createWriteStream(tmpFilePath);
 
-        response.setHeader('Content-Length', file.size);
-        response.setHeader('Content-Type', file.mimeType);
-        response.setHeader('Cache-Control', 'max-age=3600');
+        stream.pipe(writeStream);
 
-        stream.pipe(response);
+        stream
+          .on('end', () => {
+            response.setHeader('Content-Length', file.size);
+            response.setHeader('Content-Type', file.mimeType);
+            response.setHeader('Cache-Control', 'max-age=3600');
+
+            response.sendFile(tmpFilePath, () => {
+              unlinkSync(tmpFilePath);
+            });
+          })
+          .on('error', (error) => {
+            unlinkSync(tmpFilePath);
+
+            throw error;
+          });
       }),
     )
 
