@@ -8,7 +8,7 @@ import { CacheService } from './cache.service';
 import { PrismaService } from './prisma.service';
 import { DriveService } from './drive.service';
 import { FileListDto } from '../dtos/FileList.dto';
-import generateCharacters from 'generate-unique-id';
+import { generate as generateString } from 'generate-password';
 import env from 'env-var';
 
 export class FileService {
@@ -81,8 +81,7 @@ export class FileService {
       data: {
         fileId: data.id!,
         name: file.originalname,
-        prefix: generateCharacters({
-          useNumbers: false,
+        prefix: generateString({
           length: 6,
         }),
         size: file.size,
