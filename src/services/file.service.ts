@@ -70,7 +70,7 @@ export class FileService {
     return this.multer;
   }
 
-  public async upload(file: Express.Multer.File): Promise<File> {
+  public async upload(file: Express.Multer.File): Promise<IFile> {
     const stream = createReadStream(file.path);
     const data = await this.driveService.upload(
       stream,
@@ -93,7 +93,7 @@ export class FileService {
 
     await this.resetListCache();
 
-    return result;
+    return this.generateIFile(result);
   }
 
   public async getByPrefixAndName(
@@ -129,7 +129,7 @@ export class FileService {
     return stream;
   }
 
-  public async deleteById(id: string): Promise<File> {
+  public async deleteById(id: string): Promise<IFile> {
     const file = await this.prismaClient.file.delete({
       where: {
         id,
@@ -142,14 +142,16 @@ export class FileService {
     );
     await this.resetListCache();
 
-    return file;
+    return this.generateIFile(file);
   }
 
-  public async getList(fileListDto: FileListDto): Promise<File[]> {
+  public async getList(fileListDto: FileListDto): Promise<IFile[]> {
     const cacheKey = `FileService:getList{${JSON.stringify(fileListDto)}}`;
     const cache = await this.cacheService.get<File[]>(cacheKey);
 
-    if (cache) return cache;
+    if (cache) {
+      return cache.map(this.generateIFile);
+    }
 
     const files = await this.prismaClient.file.findMany({
       where: {
@@ -175,7 +177,7 @@ export class FileService {
 
     await this.cacheService.set(cacheKey, files);
 
-    return files;
+    return files.map(this.generateIFile);
   }
 
   private async resetListCache(): Promise<void> {
@@ -186,5 +188,24 @@ export class FileService {
     );
 
     await Promise.all(listKeys.map((key) => this.cacheService.del(key)));
+  }
+
+  private generateIFile(file: File): IFile {
+    const data: IFile = {
+      id: file.id,
+      createdAt: file.createdAt,
+      prefix: file.prefix,
+      name: file.name,
+      size: file.size,
+      mimeType: file.mimeType,
+    };
+
+    const serverUrl = env.get('SERVER_URL').asUrlString();
+
+    if (serverUrl) {
+      data.url = `${serverUrl}${file.prefix}/${file.name}`;
+    }
+
+    return data;
   }
 }
