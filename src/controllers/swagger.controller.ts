@@ -2,10 +2,11 @@ import { wrapper } from '@jmrl23/express-helper';
 import { Router } from 'express';
 import { serve, setup } from 'swagger-ui-express';
 import swaggerJsDoc, { type OAS3Options } from 'swagger-jsdoc';
+import env from 'env-var';
 
 export const controller = Router();
 
-const swaggerSpec = swaggerJsDoc({
+const options = {
   definition: {
     openapi: '3.0.0',
     info: {
@@ -16,10 +17,6 @@ const swaggerSpec = swaggerJsDoc({
       {
         url: 'http://localhost:3001',
         description: 'Local development',
-      },
-      {
-        url: 'https://service-file-0023.onrender.com',
-        description: 'Render',
       },
     ],
     components: {
@@ -74,7 +71,18 @@ const swaggerSpec = swaggerJsDoc({
     ],
   },
   apis: ['./src/controllers/**/*.controller.ts'],
-} satisfies OAS3Options);
+} satisfies OAS3Options;
+
+const productionServer = env.get('SERVER_URL').asString();
+
+if (productionServer) {
+  options.definition.servers.push({
+    url: productionServer,
+    description: 'Production server',
+  });
+}
+
+const swaggerSpec = swaggerJsDoc(options);
 
 controller
 
